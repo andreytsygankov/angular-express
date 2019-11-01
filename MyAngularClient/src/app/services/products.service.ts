@@ -34,6 +34,25 @@ const CREATE_PRODUCT = gql`
   }
 `;
 
+const UPDATE_PRODUCT = gql`
+  mutation updateProduct($id: ID!, $name: String!, $description: String!, $sku: String!, $price: String!, $stock: String!) {
+    updateProduct(id: $id, name: $name, description: $description, sku: $sku, price: $price, stock: $stock){
+       id
+       name
+       sku
+       description
+       price
+       stock
+    }
+  }
+`;
+
+const DELETE_PRODUCT = gql`
+  query deleteProduct($id: ID!){
+    deleteProduct(id: $id) 
+  }
+`;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -41,35 +60,31 @@ export class ProductsService {
     private query: QueryRef<any>;
     constructor(public oktaAuth: OktaAuthService, private http: HttpClient, private apollo: Apollo) {}
 
-    private async request(query, variables?, data?: any) {
+    private request(query, variables?, data?: any) {
 
-
+        console.log(query);
         const result = this.apollo.watchQuery({
             query: query,
             variables: variables
         });
-
         return new Promise<any>((resolve, reject) => {
             result.valueChanges.subscribe(resolve as any, reject as any);
         });
     }
 
-    private async mutationRequest(query, variables?, data?: any) {
+    private mutationRequest(query, variables?, data?: any) {
 
         console.log(query);
-        console.log(variables);
         const result = this.apollo.mutate({
             mutation: query,
             variables: variables
         });
-
         return new Promise<any>((resolve, reject) => {
             result.subscribe(resolve as any, reject as any);
         });
     }
 
     getProducts() {
-        console.log('1');
         return this.request(GET_PRODUCTS);
     }
 
@@ -78,11 +93,12 @@ export class ProductsService {
     }
 
     updateProduct(product: Product) {
-        console.log('updateProduct ' + JSON.stringify(product));
-        // return this.request('post', `${API_PATH.baseUrl}/${API_PATH.product}/${product.id}`, product);
+        // console.log('updateProduct ' + JSON.stringify(product));
+        return this.mutationRequest(UPDATE_PRODUCT, product)
     }
 
     deleteProduct(id: string) {
         // return this.request('delete', `${API_PATH.baseUrl}/${API_PATH.product}/${id}`);
+        return this.request(DELETE_PRODUCT, {id: id});
     }
 }

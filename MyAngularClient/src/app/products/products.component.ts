@@ -15,6 +15,8 @@ export class ProductsComponent implements OnInit {
 
     selectedProduct: Product = new Product();
     loading = false;
+    data;
+    currentData;
 
     constructor(public productService: ProductsService) {
     }
@@ -23,11 +25,15 @@ export class ProductsComponent implements OnInit {
         this.refresh();
     }
 
-    async refresh() {
+    async refresh(data?) {
         this.loading = true;
-        const data = await this.productService.getProducts();
-        console.log(data);
-        this.dataSource.data = data.data.products;
+        if(data) {
+            this.currentData = this.currentData.filter(item => item.id !== data);
+        } else {
+            this.data = await this.productService.getProducts();
+            this.currentData = this.data.data.products;
+        }
+        this.dataSource.data = this.currentData;
         this.loading = false;
     }
 
@@ -35,9 +41,10 @@ export class ProductsComponent implements OnInit {
         if (this.selectedProduct.id !== undefined) {
             await this.productService.updateProduct(this.selectedProduct);
         } else {
-            await this.productService.createProduct(this.selectedProduct);
+            const data = await this.productService.createProduct(this.selectedProduct);
+            console.log(data);
+            this.currentData.push(data.data.createProduct);
         }
-        console.log('test');
         this.selectedProduct = new Product();
         await this.refresh();
     }
@@ -53,9 +60,9 @@ export class ProductsComponent implements OnInit {
     async deleteProduct(product: Product) {
         this.loading = true;
         if (confirm(`Are you sure you want to delete the product ${product.name}. This cannot be undone.`)) {
-            this.productService.deleteProduct(product.id);
+            await this.productService.deleteProduct(product.id);
+            await this.refresh(product.id);
         }
-        await this.refresh();
     }
 
 }

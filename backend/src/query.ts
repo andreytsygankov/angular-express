@@ -26,15 +26,15 @@ export const queryType = new GraphQLObjectType({
                 return allProducts;
             }
         },
-        product: {
-            type: productType,
+        deleteProduct: {
+            type: GraphQLString,
             args: {
-                id: { type: GraphQLString },
+                id: { type: GraphQLID },
             },
-            resolve: async function (args) {
+            resolve: async function (root, param) {
                 const repository = await getProductRepository();
-                let product = await repository.find({id: args.id});
-                return product;
+                await repository.delete({id: param.id});
+                return 'OK';
             }
         }
     }

@@ -35,16 +35,16 @@ exports.queryType = new GraphQLObjectType({
                 });
             }
         },
-        product: {
-            type: exports.productType,
+        deleteProduct: {
+            type: GraphQLString,
             args: {
-                id: { type: GraphQLString },
+                id: { type: graphql_1.GraphQLID },
             },
-            resolve: function (args) {
+            resolve: function (root, param) {
                 return __awaiter(this, void 0, void 0, function* () {
                     const repository = yield model_1.getProductRepository();
-                    let product = yield repository.find({ id: args.id });
-                    return product;
+                    yield repository.delete({ id: param.id });
+                    return 'OK';
                 });
             }
         }
