@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
-import { ProductsService } from './products.service';
+import { ProductsService } from '../services/products.service';
 import { Product } from './product';
 
 @Component({
@@ -26,7 +26,8 @@ export class ProductsComponent implements OnInit {
     async refresh() {
         this.loading = true;
         const data = await this.productService.getProducts();
-        this.dataSource.data = data;
+        console.log(data);
+        this.dataSource.data = data.data.products;
         this.loading = false;
     }
 
@@ -36,6 +37,7 @@ export class ProductsComponent implements OnInit {
         } else {
             await this.productService.createProduct(this.selectedProduct);
         }
+        console.log('test');
         this.selectedProduct = new Product();
         await this.refresh();
     }

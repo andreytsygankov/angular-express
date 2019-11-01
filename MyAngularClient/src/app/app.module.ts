@@ -15,14 +15,24 @@ import {
     MatTableModule,
     MatToolbarModule
 } from '@angular/material';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
 import {ProductsComponent} from './products/products.component';
 import {HomeComponent} from './home/home.component';
 import {OktaAuthModule, OktaAuthService, OktaCallbackComponent} from '@okta/okta-angular';
-import {ProductsService} from "./products/products.service";
+import {ProductsService} from "./services/products.service";
+import {AuthInterceptor} from "./services/authInterceptor.service";
+import {APOLLO_OPTIONS, ApolloModule} from "apollo-angular";
+import {HttpLink, HttpLinkModule} from "apollo-angular-link-http";
+import {InMemoryCache} from "apollo-cache-inmemory";
+import {API_PATH} from "./common/constants";
 
-
+export function createApollo(httpLink: HttpLink) {
+    return {
+        link: httpLink.create({uri: `${API_PATH.baseUrl}/${API_PATH.graph}`}),
+        cache: new InMemoryCache(),
+    };
+}
 
 @NgModule({
     declarations: [
@@ -48,9 +58,16 @@ import {ProductsService} from "./products/products.service";
             issuer: 'https://dev-159175.oktapreview.com/oauth2/default',
             redirectUri: 'http://localhost:4200/implicit/callback',
             clientId: '0oailisx18ZcWlvCb0h7'
-        })
+        }),
+        HttpClientModule,
+        ApolloModule,
+        HttpLinkModule
     ],
-    providers: [],
+    providers: [
+        { provide: APOLLO_OPTIONS, useFactory: createApollo, deps: [HttpLink] },
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {

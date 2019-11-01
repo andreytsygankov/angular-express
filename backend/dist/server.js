@@ -4,14 +4,22 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const bearerToken = require('express-bearer-token');
-const product_1 = require("./product");
 const auth_1 = require("./auth");
-const app = express()
-    .use(cors())
-    .use(bodyParser.json())
-    .use(bearerToken())
-    .use(auth_1.oktaAuth)
-    .use(product_1.router);
+const graphql_1 = require("graphql");
+const graphqlHTTP = require("express-graphql");
+const query_1 = require("./query");
+const mutation_1 = require("./mutation");
+const schema = new graphql_1.GraphQLSchema({ query: query_1.queryType, mutation: mutation_1.mutationType });
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bearerToken());
+app.use(auth_1.oktaAuth);
+// app.use(productRouter);
+app.use('/graphql', graphqlHTTP({
+    schema: schema,
+    graphiql: true,
+}));
 app.listen(4201, (err) => {
     if (err) {
         return console.log(err);

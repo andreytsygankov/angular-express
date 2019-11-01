@@ -16,6 +16,8 @@
     "cors": "2.8.4",
     "express": "4.16.4",
     "express-bearer-token": "2.2.0",
+    "express-graphql": "^0.9.0",
+    "graphql": "^14.5.8",
     "sqlite3": "4.0.3",
     "tsc": "1.20150623.0",
     "typeorm": "0.2.8",

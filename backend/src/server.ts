@@ -4,13 +4,24 @@ import * as bodyParser from 'body-parser';
 const bearerToken = require('express-bearer-token');
 import {router as productRouter} from './product'
 import {oktaAuth} from './auth'
+import {GraphQLSchema} from "graphql";
+import graphqlHTTP = require("express-graphql");
+import {queryType} from './query';
+import {mutationType} from "./mutation";
 
-const app = express()
-    .use(cors())
-    .use(bodyParser.json())
-    .use(bearerToken())
-    .use(oktaAuth)
-    .use(productRouter);
+const schema = new GraphQLSchema({ query: queryType, mutation: mutationType });
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bearerToken());
+app.use(oktaAuth);
+// app.use(productRouter);
+
+app.use('/graphql', graphqlHTTP({
+    schema: schema,
+    graphiql: true,
+}));
 
 app.listen(4201, (err) => {
     if (err) {

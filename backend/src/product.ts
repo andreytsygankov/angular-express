@@ -7,9 +7,9 @@ router.get('/product', async function (req: Request, res: Response, next: NextFu
     try {
         const repository = await getProductRepository();
         const allProducts = await repository.find();
+
         res.send(allProducts);
-    }
-    catch (err) {
+    } catch (err) {
         return next(err);
     }
 });
@@ -19,8 +19,7 @@ router.get('/product/:id', async function (req: Request, res: Response, next: Ne
         const repository = await getProductRepository();
         const product = await repository.find({id: req.params.id});
         res.send(product);
-    }
-    catch (err) {
+    } catch (err) {
         return next(err);
     }
 });
@@ -37,8 +36,7 @@ router.post('/product', async function (req: Request, res: Response, next: NextF
 
         const result = await repository.save(product);
         res.send(result);
-    }
-    catch (err) {
+    } catch (err) {
         return next(err);
     }
 });
@@ -55,8 +53,7 @@ router.post('/product/:id', async function (req: Request, res: Response, next: N
 
         const result = await repository.save(product);
         res.send(result);
-    }
-    catch (err) {
+    } catch (err) {
         return next(err);
     }
 });
@@ -66,8 +63,7 @@ router.delete('/product/:id', async function (req: Request, res: Response, next:
         const repository = await getProductRepository();
         await repository.delete({id: req.params.id});
         res.send('OK');
-    }
-    catch (err) {
+    } catch (err) {
         return next(err);
     }
 });
