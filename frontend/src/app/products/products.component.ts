@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { ProductsService } from '../services/products.service';
-import { Product } from './product';
+import { Product } from '../models/product';
 
 @Component({
   selector: 'app-products',
@@ -42,7 +42,6 @@ export class ProductsComponent implements OnInit {
             await this.productService.updateProduct(this.selectedProduct);
         } else {
             const data = await this.productService.createProduct(this.selectedProduct);
-            console.log(data);
             this.currentData.push(data.data.createProduct);
         }
         this.selectedProduct = new Product();
