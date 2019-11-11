@@ -8,8 +8,13 @@ import {GraphQLSchema} from "graphql";
 import graphqlHTTP = require("express-graphql");
 import {queryType} from './query';
 import {mutationType} from "./mutation";
+import {subscriptionType} from "./subscribe";
 
-const schema = new GraphQLSchema({ query: queryType, mutation: mutationType });
+const schema = new GraphQLSchema({
+    query: queryType,
+    mutation: mutationType,
+    subscription: subscriptionType
+});
 
 const app = express();
 app.use(cors());

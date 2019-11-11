@@ -66,7 +66,6 @@ export function createApollo(httpLink: HttpLink) {
     providers: [
         { provide: APOLLO_OPTIONS, useFactory: createApollo, deps: [HttpLink] },
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-
     ],
     bootstrap: [AppComponent]
 })

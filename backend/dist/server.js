@@ -9,7 +9,12 @@ const graphql_1 = require("graphql");
 const graphqlHTTP = require("express-graphql");
 const query_1 = require("./query");
 const mutation_1 = require("./mutation");
-const schema = new graphql_1.GraphQLSchema({ query: query_1.queryType, mutation: mutation_1.mutationType });
+const subscribe_1 = require("./subscribe");
+const schema = new graphql_1.GraphQLSchema({
+    query: query_1.queryType,
+    mutation: mutation_1.mutationType,
+    subscription: subscribe_1.subscriptionType
+});
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
