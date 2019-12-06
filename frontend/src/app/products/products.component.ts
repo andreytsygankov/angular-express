@@ -25,27 +25,36 @@ export class ProductsComponent implements OnInit {
         this.refresh();
     }
 
-    async refresh(data?) {
+    refresh(data?) {
         this.loading = true;
         if(data) {
             this.currentData = this.currentData.filter(item => item.id !== data);
+            this.dataSource.data = this.currentData;
+            this.loading = false;
         } else {
-            this.data = await this.productService.getProducts();
-            this.currentData = this.data.data.products;
+            this.productService.getProducts().subscribe(res => {
+                this.data = res;
+                this.currentData = this.data.data.products;
+                this.dataSource.data = this.currentData;
+                this.loading = false;
+            });
         }
-        this.dataSource.data = this.currentData;
-        this.loading = false;
     }
 
-    async updateProduct() {
+    updateProduct() {
         if (this.selectedProduct.id !== undefined) {
-            await this.productService.updateProduct(this.selectedProduct);
+            this.productService.updateProduct(this.selectedProduct).subscribe(res => {
+                console.log(res);
+            });
         } else {
-            const data = await this.productService.createProduct(this.selectedProduct);
-            this.currentData.push(data.data.createProduct);
+            this.productService.createProducts(this.selectedProduct).subscribe(res => {
+                let data = res.data;
+                console.log(res);
+                // this.currentData.push(data.createProduct);
+            });
         }
         this.selectedProduct = new Product();
-        await this.refresh();
+        this.refresh();
     }
 
     editProduct(product: Product) {
@@ -56,11 +65,13 @@ export class ProductsComponent implements OnInit {
         this.selectedProduct = new Product();
     }
 
-    async deleteProduct(product: Product) {
+    deleteProduct(product: Product) {
         this.loading = true;
         if (confirm(`Are you sure you want to delete the product ${product.name}. This cannot be undone.`)) {
-            await this.productService.deleteProduct(product.id);
-            await this.refresh(product.id);
+            this.productService.deleteProduct(product.id).subscribe(res => {
+                console.log(res);
+            });
+            this.refresh(product.id);
         }
     }
 

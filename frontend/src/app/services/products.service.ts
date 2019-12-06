@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { take, map } from 'rxjs/operators';
 import { OktaAuthService } from '@okta/okta-angular';
 import { Product } from '../models/product';
 import {Apollo, QueryRef} from "apollo-angular";
@@ -24,9 +25,16 @@ export class ProductsService {
             query: query,
             variables: variables
         });
-        return new Promise<any>((resolve, reject) => {
-            result.valueChanges.subscribe(resolve as any, reject as any);
-        });
+        // return new Promise<any>((resolve, reject) => {
+        //     result.valueChanges.subscribe(resolve as any, reject as any);
+        // });
+
+        return result.valueChanges.pipe(
+                map((res) => {
+                    return res;
+                })
+            );
+
     }
 
     private mutation(query, variables?, data?: any) {
@@ -36,9 +44,14 @@ export class ProductsService {
             mutation: query,
             variables: variables
         });
-        return new Promise<any>((resolve, reject) => {
-            result.subscribe(resolve as any, reject as any);
-        });
+        // return new Promise<any>((resolve, reject) => {
+        //     result.subscribe(resolve as any, reject as any);
+        // });
+        return result.pipe(
+            map((res) => {
+                return res;
+            })
+        );
     }
 
     private subscription(query, variables?, data?: any) {
@@ -47,17 +60,22 @@ export class ProductsService {
         const result = this.apollo.subscribe({
             query: query
         });
-        return new Promise<any>((resolve, reject) => {
-            result.subscribe(resolve as any, reject as any);
-        });
+        // return new Promise<any>((resolve, reject) => {
+        //     result.subscribe(resolve as any, reject as any);
+        // });
+        return result.pipe(
+            map((res) => {
+                return res;
+            })
+        );
     }
 
     getProducts() {
         // return this.query(GET_PRODUCTS);
-        return this.subscription(GET_PRODUCTS_SUBSCRIBE);
+        return this.subscription(GET_PRODUCTS);
     }
 
-    createProduct(product: Product) {
+    createProducts(product: Product) {
         return this.mutation(CREATE_PRODUCT, product)
     }
 
